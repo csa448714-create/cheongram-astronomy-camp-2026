@@ -11,29 +11,23 @@ import ProgramHighlights from './components/ProgramHighlights';
 import LocationGuide from './components/LocationGuide';
 import RegistrationSection from './components/RegistrationSection';
 import EndingSection from './components/EndingSection';
-import QrCodeModal from './components/QrCodeModal';
-import EventConfigModal from './components/EventConfigModal';
 import { ExternalLink, ChevronUp } from 'lucide-react';
 
 export default function App() {
-  const [config, setConfig] = useState<EventConfig>(() => {
-    // Check if user has saved modified event config in localStorage
-    try {
-      const saved = localStorage.getItem('gyerim_custom_event_config_v7');
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch {
-      // ignore
-    }
-    return defaultEventConfig;
-  });
-
-  const [qrModalOpen, setQrModalOpen] = useState(false);
-  const [organizerModalOpen, setOrganizerModalOpen] = useState(false);
+  // Use canonical defaultEventConfig defined in code by the administrator
+  const [config] = useState<EventConfig>(defaultEventConfig);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
+    // Clear any obsolete local storage entries from previous editing sessions
+    try {
+      localStorage.removeItem('gyerim_custom_event_config_v7');
+      localStorage.removeItem('gyerim_custom_event_config_v6');
+      localStorage.removeItem('gyerim_custom_event_config_v5');
+    } catch {
+      // ignore
+    }
+
     const handleScroll = () => {
       if (window.scrollY > 400) {
         setShowScrollTop(true);
@@ -44,15 +38,6 @@ export default function App() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleUpdateConfig = (newConfig: EventConfig) => {
-    setConfig(newConfig);
-    try {
-      localStorage.setItem('gyerim_custom_event_config_v7', JSON.stringify(newConfig));
-    } catch {
-      // ignore
-    }
-  };
 
   const handleScrollDownFromCover = () => {
     const target = document.getElementById('greeting');
@@ -70,12 +55,8 @@ export default function App() {
       {/* Dynamic Starry Canvas in the background */}
       <StarryCanvas />
 
-      {/* Top Header Navigation */}
-      <HeaderNavigation
-        config={config}
-        onOpenQr={() => setQrModalOpen(true)}
-        onOpenOrganizer={() => setOrganizerModalOpen(true)}
-      />
+      {/* Top Header Navigation (Clean Visitor Nav) */}
+      <HeaderNavigation config={config} />
 
       {/* Main Container: Mobile-First Invitation Canvas with elegant desktop framing */}
       <main className="relative z-10 w-full max-w-xl mx-auto sm:border-x sm:border-amber-300/10 sm:shadow-2xl sm:shadow-black bg-[#050814]/75 backdrop-blur-[2px]">
@@ -114,7 +95,7 @@ export default function App() {
           <RegistrationSection config={config} />
         )}
 
-        {/* SECTION 8: Closing & Cheering Guestbook & Contact */}
+        {/* SECTION 8: Closing & Contact */}
         {config.sectionVisibility.ending && (
           <EndingSection config={config} />
         )}
@@ -152,20 +133,6 @@ export default function App() {
           </div>
         </div>
       )}
-
-      {/* Global Modals */}
-      <QrCodeModal
-        isOpen={qrModalOpen}
-        onClose={() => setQrModalOpen(false)}
-        url={window.location.href}
-      />
-
-      <EventConfigModal
-        isOpen={organizerModalOpen}
-        onClose={() => setOrganizerModalOpen(false)}
-        config={config}
-        onUpdateConfig={handleUpdateConfig}
-      />
     </div>
   );
 }
