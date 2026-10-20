@@ -1,0 +1,6 @@
+{
+  "name": "2026 청람시민천문캠프 모바일 초대장",
+  "description": "경북형 과학중점고등학교 계림고등학교 2026학년도 청람시민천문캠프 모바일 디지털 초대장입니다. 별을 읽고 우주를 만나는 밤하늘 관측 캠프에 여러분을 초대합니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
