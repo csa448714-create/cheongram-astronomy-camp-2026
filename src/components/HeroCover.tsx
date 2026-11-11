@@ -5,9 +5,10 @@ import heroImg from '../assets/images/hero_celestial_night_1792472205181.jpg';
 interface HeroCoverProps {
   config: EventConfig;
   onScrollDown: () => void;
+  onOpenLookup?: () => void;
 }
 
-export default function HeroCover({ config, onScrollDown }: HeroCoverProps) {
+export default function HeroCover({ config, onScrollDown, onOpenLookup }: HeroCoverProps) {
   return (
     <section className="relative min-h-[95vh] sm:min-h-screen flex flex-col justify-between items-center text-center px-6 py-12 overflow-hidden">
       {/* Background Hero Image with atmospheric dark vignette and gold rim */}
@@ -39,9 +40,9 @@ export default function HeroCover({ config, onScrollDown }: HeroCoverProps) {
       </div>
 
       {/* Center Event Typography & Emblem */}
-      <div className="relative z-10 my-auto py-8 max-w-sm sm:max-w-md flex flex-col items-center">
+      <div className="relative z-10 my-auto py-6 max-w-sm sm:max-w-md flex flex-col items-center">
         {/* Subtle decorative gold circle ring */}
-        <div className="relative w-16 h-16 mb-6 flex items-center justify-center">
+        <div className="relative w-16 h-16 mb-5 flex items-center justify-center">
           <div className="absolute inset-0 rounded-full border border-amber-300/40 animate-spin-slow" />
           <div className="absolute inset-1 rounded-full border border-amber-400/20 border-dashed" />
           <span className="text-amber-200 text-xl font-cinzel">✦</span>
@@ -62,7 +63,7 @@ export default function HeroCover({ config, onScrollDown }: HeroCoverProps) {
           </span>
         </h1>
 
-        <div className="w-12 h-[1px] bg-gradient-to-r from-transparent via-amber-300/70 to-transparent my-6" />
+        <div className="w-12 h-[1px] bg-gradient-to-r from-transparent via-amber-300/70 to-transparent my-5" />
 
         {/* Date and Time Badge */}
         <div className="space-y-1.5 text-slate-200 font-light">
@@ -73,6 +74,19 @@ export default function HeroCover({ config, onScrollDown }: HeroCoverProps) {
             {config.eventLocation}
           </p>
         </div>
+
+        {/* Prominent Action: 선정 결과 및 프로그램 확인 버튼 */}
+        {onOpenLookup && (
+          <div className="mt-6 w-full max-w-xs">
+            <button
+              onClick={onOpenLookup}
+              className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xl shadow-amber-400/20 border border-amber-200/50 transition-all transform active:scale-[0.98] cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-slate-950 fill-current" />
+              <span>선정 결과 및 프로그램 확인</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Bottom Scroll Prompt */}

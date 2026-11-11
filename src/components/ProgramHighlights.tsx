@@ -31,10 +31,10 @@ export default function ProgramHighlights({ config }: ProgramHighlightsProps) {
           <span>프로그램 체험 안내</span>
         </p>
         <p className="text-slate-300 font-light leading-relaxed">
-          • 사전 신청 시 5가지 프로그램 중 3가지 사전 선택하여 타임별(각 30분)로 참여합니다.
+          • 사전 신청 시 5가지 프로그램 중 3가지 사전 선택하여 타임별(각 25분)로 참여합니다.
         </p>
         <p className="text-amber-200/90 font-light leading-relaxed">
-          • 프로그램 간 대기 시간이 생기는 경우, 야외 부스에서 <strong className="text-white">우주 그립톡 만들기 체험</strong> 및 <strong className="text-white">따뜻한 간식차</strong>를 자유롭게 이용하실 수 있습니다.
+          • 프로그램 사이 휴식 및 이동시간(각 10분)에는 <strong className="text-white">우주 그립톡 제작 부스</strong> 및 <strong className="text-white">따뜻한 간식차</strong>를 자유롭게 이용하실 수 있습니다.
         </p>
       </div>
 

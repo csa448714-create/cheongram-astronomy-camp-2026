@@ -25,8 +25,8 @@ export const defaultEventConfig: EventConfig = {
   // 2. 행사 일시 및 장소
   eventDateText: '2026년 11월 20일 (금요일)',
   eventDateIso: '2026-11-20T18:40:00+09:00',
-  eventEndTimeIso: '2026-11-20T22:00:00+09:00',
-  eventTimeText: '18:40 ~ 22:00 (등록 18:40 시작 / 특강 19:00 / 폐회 22:00)',
+  eventEndTimeIso: '2026-11-20T21:50:00+09:00',
+  eventTimeText: '18:40 ~ 21:50 (등록 18:40 / 특강 19:00 / 폐회 21:35~)',
   backupDateNotice: '※ 기상 악화 시 12월 14일(월) ~ 18일(금) 중 1일로 연기됩니다.',
   eventLocation: '계림고등학교 화랑관(강당), 운동장 및 천문고',
   eventLocationDetail: '화랑관 2층 강당(특강 및 개회) / 운동장 및 천문고(체험활동 및 천체관측)',
@@ -61,60 +61,76 @@ export const defaultEventConfig: EventConfig = {
   ],
   hostSignature: '계림고등학교 과학중점부 학생 및 교직원 일동',
 
-  // 5. 행사 프로그램 세부 일정 (전면 수정 반영)
+  // 5. 행사 프로그램 세부 일정 (새로운 시간표 반영)
   schedule: [
     {
       id: 'step-1',
       time: '18:40 ~ 19:00',
-      title: '참가자 등록 및 안내 자료 배부',
-      location: '화랑관 2층 강당 입구',
-      description: '참가자 명단 확인, 천문 캠프 가이드북 및 야광 팔찌·성도 배부',
-      badge: '등록'
+      title: '등록 및 개회식',
+      location: '화랑관 2층 강당 입구 및 강당',
+      description: '참가자 명단 확인, 천문 캠프 가이드북 및 기념품 배부, 개회식 진행',
+      badge: '등록·개회'
     },
     {
       id: 'step-2',
-      time: '19:00 ~ 20:10',
-      title: '개회식 및 천문학 특별 강연',
+      time: '19:00 ~ 19:50',
+      title: '천문학 특별 강연',
       location: '화랑관 2층 강당',
-      description: '주제: 반 고흐 〈별이 빛나는 밤〉의 천문학적 해석 (강연자: 에스엘랩 대표 김정현)',
+      description: '주제: 별 볼일 있는 하루 (강연자: 배준석 선생님, 포항고등학교)',
       badge: '특강'
     },
     {
+      id: 'step-break-1',
+      time: '19:50 ~ 20:00',
+      title: '휴식 및 이동시간',
+      location: '화랑관 및 체험 부스 구역',
+      description: '그립톡 제작 부스 및 간식차 이용, 1타임 프로그램 구역으로 이동',
+      badge: '휴식·이동'
+    },
+    {
       id: 'step-3',
-      time: '20:10 ~ 20:40',
-      title: '프로그램 체험 활동 (1타임)',
-      location: '각 지정 체험 구역 (운동장/천문고/교실)',
-      description: '사전 선택한 프로그램 참가 (30분간 진행)',
+      time: '20:00 ~ 20:25',
+      title: '1타임 프로그램',
+      location: '각 지정 체험 구역 (운동장/천문고/강당)',
+      description: '사전 선택한 1타임 프로그램 참가 (25분간 진행)',
       badge: '1타임'
     },
     {
+      id: 'step-break-2',
+      time: '20:25 ~ 20:35',
+      title: '휴식 및 이동시간 (강당)',
+      location: '화랑관 2층 강당',
+      description: '그립톡 제작 부스 및 간식차 이용, 2타임 프로그램 구역으로 이동',
+      badge: '휴식·이동'
+    },
+    {
       id: 'step-4',
-      time: '20:40 ~ 21:10',
-      title: '프로그램 체험 활동 (2타임)',
-      location: '각 지정 체험 구역 (운동장/천문고/교실)',
-      description: '사전 선택한 프로그램 참가 (30분간 진행)',
+      time: '20:35 ~ 21:00',
+      title: '2타임 프로그램',
+      location: '각 지정 체험 구역 (운동장/천문고/강당)',
+      description: '사전 선택한 2타임 프로그램 참가 (25분간 진행)',
       badge: '2타임'
     },
     {
+      id: 'step-break-3',
+      time: '21:00 ~ 21:10',
+      title: '휴식 및 이동시간 (강당)',
+      location: '화랑관 2층 강당',
+      description: '그립톡 제작 부스 및 간식차 이용, 3타임 프로그램 구역으로 이동',
+      badge: '휴식·이동'
+    },
+    {
       id: 'step-5',
-      time: '21:10 ~ 21:50',
-      title: '프로그램 체험 활동 (3타임)',
-      location: '각 지정 체험 구역 (운동장/천문고/교실)',
-      description: '사전 선택한 프로그램 참가 (30분간 진행)',
+      time: '21:10 ~ 21:35',
+      title: '3타임 프로그램',
+      location: '각 지정 체험 구역 (운동장/천문고/강당)',
+      description: '사전 선택한 3타임 프로그램 참가 (25분간 진행)',
       badge: '3타임'
     },
     {
-      id: 'step-bonus',
-      time: '체험 활동 중 상시',
-      title: '우주 그립톡 만들기 체험 & 간식차 이용',
-      location: '화랑관 앞 야외 부스 및 간식차 존',
-      description: '프로그램 간 대기 시간이나 쉬는 시간에 나만의 별자리 그립톡 만들기 및 따뜻한 간식차를 자유롭게 이용하실 수 있습니다.',
-      badge: '상시운영'
-    },
-    {
       id: 'step-6',
-      time: '21:50 ~ 22:00',
-      title: '폐회 및 기념품 증정',
+      time: '21:35 ~',
+      title: '폐회 및 만족도조사 실시',
       location: '화랑관 2층 강당',
       description: '캠프 만족도 조사 참여 및 참가자 전원 기념품 증정',
       badge: '폐회'
@@ -125,11 +141,11 @@ export const defaultEventConfig: EventConfig = {
   highlights: [
     {
       id: 'hl-special',
-      title: '특강: 반고흐 별이 빛나는 밤의 천문학적 해석',
-      subtitle: 'Opening Special Lecture · 강연자: 김정현 대표 (에스엘랩)',
-      description: '불멸의 화가 빈센트 반 고흐가 캔버스에 담아낸 소용돌이치는 밤하늘과 별, 금성과 초승달의 실제 천문학적 배치와 우주의 신비를 밝혀내는 특별 강연입니다. (장소: 화랑관 2층 강당)',
+      title: '특강: 별 볼일 있는 하루',
+      subtitle: 'Opening Special Lecture · 강연자: 배준석 선생님 (포항고등학교)',
+      description: '일상 속에서 마주하는 밤하늘과 별, 그리고 천문학의 경이로움을 흥미진진하게 풀어내는 특별 강연입니다. (장소: 화랑관 2층 강당)',
       image: vangoghLectureImg,
-      imageAlt: '반 고흐 명화와 우주 성운을 배경으로 진행되는 천문학 특별 강연'
+      imageAlt: '별밤과 우주를 배경으로 진행되는 천문학 특별 강연'
     },
     {
       id: 'hl-prog-1',
@@ -181,7 +197,7 @@ export const defaultEventConfig: EventConfig = {
   transitGuide: [
     {
       title: '자가용 및 내비게이션',
-      description: '‘계림고등학교’ 또는 ‘경주시 용담로 122’ 검색 (교내 지정 주차 구역 무료 주차 가능)'
+      description: '‘계림고등학교’ 또는 ‘경주시 용담로 122’ 검색 (※ 교내 주차 공간이 협소하여 교내 주차가 어렵습니다. 황성동 유림공용주차장 또는 경주실내체육관 입구 인근 공영주차장을 이용해 주세요.)'
     },
     {
       title: '대중교통 (시내버스) 이용 시',
@@ -193,14 +209,14 @@ export const defaultEventConfig: EventConfig = {
     }
   ],
 
-  // 8. 참가 신청 (구글 폼 링크)
+  // 8. 참가 신청 안내 (접수 마감)
   registration: {
     enabled: true,
-    buttonText: '천문캠프 참가 신청하기 (구글 폼)',
-    formUrl: 'https://forms.gle/jx5E6sxpC5iwVtiQ9',
-    notice: '신청 인원이 90명 초과 시 추첨을 통해 90명만 선발합니다. (원활하고 안전한 관측 장비 운영을 위해 선발 인원이 제한됩니다.)',
-    periodText: '신청 기한: 11. 8(일) 자정까지',
-    limitCountText: '모집 인원: 90명 (※ 신청 인원이 90명 초과 시 추첨으로 90명만 선발)'
+    buttonText: '참가 신청 접수 마감',
+    formUrl: '',
+    notice: '2026 청람시민천문캠프 참가 신청이 성황리에 마감되었습니다. 많은 관심과 성원에 감사드립니다. 신청하신 분들은 아래 [선정 결과 및 프로그램 확인]을 통해 참가자 선발 여부와 타임별 배정 프로그램을 확인해 주시기 바랍니다.',
+    periodText: '신청 기한: 11월 8일(일) 자정 마감 [접수 종료]',
+    limitCountText: '모집 인원: 90명 (최종 선발 및 프로그램 배정 완료)'
   },
 
   // 9. 마무리 및 문의처

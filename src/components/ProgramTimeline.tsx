@@ -31,7 +31,7 @@ export default function ProgramTimeline({ config }: ProgramTimelineProps) {
 
         <div className="space-y-6">
           {config.schedule.map((item, index) => {
-            const isSpecialBreak = item.badge === '상시운영';
+            const isSpecialBreak = item.badge === '휴식·이동';
 
             return (
               <div key={item.id} className="relative flex items-start gap-4 sm:gap-6 group">
@@ -48,7 +48,7 @@ export default function ProgramTimeline({ config }: ProgramTimelineProps) {
                       isSpecialBreak ? 'text-sky-300' : 'text-amber-200'
                     }`}
                   >
-                    {isSpecialBreak ? '★' : index + 1}
+                    {isSpecialBreak ? '☕' : index + 1}
                   </span>
                 </div>
 

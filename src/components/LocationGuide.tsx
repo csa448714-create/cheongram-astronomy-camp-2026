@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { MapPin, Copy, Check, Navigation, Maximize2, Car, Bus, Info } from 'lucide-react';
+import { MapPin, Copy, Check, Car, Bus, Info } from 'lucide-react';
 import { EventConfig } from '../types/event';
-import CampusMapModal from './CampusMapModal';
-import SchoolCampusSvg from './SchoolCampusSvg';
 
 interface LocationGuideProps {
   config: EventConfig;
@@ -10,7 +8,6 @@ interface LocationGuideProps {
 
 export default function LocationGuide({ config }: LocationGuideProps) {
   const [copied, setCopied] = useState(false);
-  const [mapModalOpen, setMapModalOpen] = useState(false);
 
   const handleCopyAddress = async () => {
     try {
@@ -45,7 +42,7 @@ export default function LocationGuide({ config }: LocationGuideProps) {
         오시는 길 & 행사장 안내
       </h2>
       <p className="text-xs sm:text-sm text-slate-400 font-light mb-8 text-center">
-        {config.schoolName} 운동장 및 천문고
+        {config.schoolName} (경주시 용담로 122)
       </p>
 
       {/* Main Location Container */}
@@ -80,53 +77,6 @@ export default function LocationGuide({ config }: LocationGuideProps) {
               </>
             )}
           </button>
-        </div>
-
-        {/* Interactive Campus Map Preview (Directly visible + Tap to Enlarge) */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-300 font-medium flex items-center gap-1.5">
-              <Navigation className="w-3.5 h-3.5 text-amber-300" />
-              교내 관측 구역 배치도
-              <span className="text-[10px] text-amber-300/70 font-light hidden sm:inline">(장소는 추후 수정될 수 있음)</span>
-            </span>
-            <button
-              onClick={() => setMapModalOpen(true)}
-              className="text-xs text-amber-300/90 hover:text-amber-200 font-medium flex items-center gap-1 cursor-pointer bg-amber-400/10 hover:bg-amber-400/20 px-2 py-0.5 rounded border border-amber-300/30 transition-colors"
-            >
-              <Maximize2 className="w-3 h-3" />
-              <span>크게 보기</span>
-            </button>
-          </div>
-
-          <div
-            onClick={() => setMapModalOpen(true)}
-            className="w-full relative group rounded-xl overflow-hidden border border-amber-300/30 bg-slate-950 p-2 sm:p-3 cursor-pointer transition-all hover:border-amber-300/70 shadow-lg text-left"
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                setMapModalOpen(true);
-              }
-            }}
-            aria-label="교내 배치도 전체화면 크게 보기"
-          >
-            {/* Direct High-Fidelity Blueprint SVG */}
-            <div className="w-full aspect-[4/3] rounded-lg overflow-hidden bg-[#070b18] border border-slate-800 flex items-center justify-center">
-              <SchoolCampusSvg className="w-full h-full object-contain" />
-            </div>
-
-            {/* Tap Hint Banner */}
-            <div className="mt-2 flex items-center justify-between px-1">
-              <span className="text-[11px] text-slate-400">
-                ※ 화랑관(강당), 천문고, 대운동장 위치 안내
-              </span>
-              <span className="text-[11px] text-amber-300 font-medium flex items-center gap-1">
-                <Maximize2 className="w-3 h-3" />
-                <span>터치하여 전체화면 확대</span>
-              </span>
-            </div>
-          </div>
         </div>
 
         {/* External Map Application Navigation Links */}
@@ -185,9 +135,6 @@ export default function LocationGuide({ config }: LocationGuideProps) {
           ))}
         </div>
       </div>
-
-      {/* Lightbox Modal */}
-      <CampusMapModal isOpen={mapModalOpen} onClose={() => setMapModalOpen(false)} />
     </section>
   );
 }
