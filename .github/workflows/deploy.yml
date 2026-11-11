@@ -34,6 +34,8 @@ jobs:
         run: npm install --legacy-peer-deps
         
       - name: Build website
+        env:
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || secrets.VITE_API_BASE_URL }}
         run: npm run build -- --base=/cheongram-astronomy-camp-2026/
 
       - name: Setup Pages

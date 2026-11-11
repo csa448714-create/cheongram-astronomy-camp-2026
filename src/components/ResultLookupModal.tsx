@@ -13,7 +13,8 @@ import {
   MessageCircle,
   RefreshCw,
   Phone,
-  Info
+  Info,
+  Server
 } from 'lucide-react';
 
 interface ResultLookupModalProps {
@@ -46,11 +47,18 @@ interface LookupErrorResult {
   message: string;
 }
 
+interface LookupConfigErrorResult {
+  status: 'config_error';
+  message: string;
+  detail?: string;
+}
+
 type LookupResponse =
   | LookupSuccessResult
   | LookupDuplicateResult
   | LookupNotFoundResult
-  | LookupErrorResult;
+  | LookupErrorResult
+  | LookupConfigErrorResult;
 
 /**
  * Resolves verified program time and location based on the confirmed event schedule
@@ -146,18 +154,74 @@ export default function ResultLookupModal({ isOpen, onClose }: ResultLookupModal
     setIsLoading(true);
     setResult(null);
 
+    const apiBase = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '');
+    const isBrowser = typeof window !== 'undefined';
+    const hostname = isBrowser ? window.location.hostname : '';
+    const isGitHubPages = hostname.endsWith('github.io');
+    const isLocalOrDevServer = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.run.app');
+
+    // Differentiate configuration error: GitHub Pages has no co-located backend server.
+    // If VITE_API_BASE_URL is missing on GitHub Pages, provide explicit admin setup guidance.
+    if (isGitHubPages && !apiBase) {
+      setResult({
+        status: 'config_error',
+        message: '조회 서버 주소(VITE_API_BASE_URL)가 설정되지 않았습니다.',
+        detail: 'GitHub Pages 정적 사이트에서 배정 조회를 운영하려면 별도로 배포된 백엔드 API 주소가 필요합니다. GitHub 저장소의 Settings > Secrets and variables > Actions에 VITE_API_BASE_URL을 등록한 뒤 Actions 워크플로를 재실행해 주세요.',
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const apiBase = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
-      const response = await fetch(`${apiBase}/api/lookup`, {
+      const targetUrl = apiBase ? `${apiBase}/api/lookup` : '/api/lookup';
+      const response = await fetch(targetUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({ last4: queryDigits }),
       });
 
-      if (!response.ok && response.status !== 400) {
-        // Distinguish server error
+      const contentType = response.headers.get('content-type') || '';
+
+      if (!response.ok || !contentType.includes('application/json')) {
+        // Detect static host 404/405 or HTML fallback when backend is absent
+        if (response.status === 404 || response.status === 405 || contentType.includes('text/html')) {
+          if (!apiBase && (isGitHubPages || !isLocalOrDevServer)) {
+            setResult({
+              status: 'config_error',
+              message: '조회 서버 주소(VITE_API_BASE_URL) 설정이 필요합니다 (404/405).',
+              detail: '정적 웹사이트 호스팅에서는 배정 조회 서버로의 연결 URL이 빌드 시 주입되어야 합니다.',
+            });
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        if (response.status === 429) {
+          setResult({
+            status: 'error',
+            message: '조회 요청이 너무 많습니다. 1분 후 다시 시도해 주세요.',
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        if (contentType.includes('application/json')) {
+          try {
+            const errData = await response.json();
+            setResult({
+              status: 'error',
+              message: errData.message || '잠시 후 다시 시도해 주세요.',
+            });
+            setIsLoading(false);
+            return;
+          } catch {
+            // fallback
+          }
+        }
+
         setResult({
           status: 'error',
           message: '잠시 후 다시 시도해 주세요.',
@@ -169,11 +233,19 @@ export default function ResultLookupModal({ isOpen, onClose }: ResultLookupModal
       const data: LookupResponse = await response.json();
       setResult(data);
     } catch (err) {
-      // Network failure or offline
-      setResult({
-        status: 'error',
-        message: '잠시 후 다시 시도해 주세요.',
-      });
+      console.error('Lookup request error:', err);
+      if (!apiBase && (isGitHubPages || !isLocalOrDevServer)) {
+        setResult({
+          status: 'config_error',
+          message: '조회 서버 주소(VITE_API_BASE_URL)가 설정되지 않았습니다.',
+          detail: 'GitHub Pages에서 조회가 동작하려면 백엔드 서버 주소를 GitHub Actions 환경변수(VITE_API_BASE_URL)로 등록해 주셔야 합니다.',
+        });
+      } else {
+        setResult({
+          status: 'error',
+          message: '일시적인 연결 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -486,11 +558,44 @@ export default function ResultLookupModal({ isOpen, onClose }: ResultLookupModal
                   </p>
                   <button
                     onClick={() => handleLookup()}
-                    className="mt-2 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 transition-colors inline-flex items-center gap-1.5"
+                    className="mt-2 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
                   >
                     <RefreshCw className="w-3 h-3" />
                     <span>다시 시도</span>
                   </button>
+                </div>
+              )}
+
+              {/* CASE 5: Configuration Error (Missing VITE_API_BASE_URL on Static Host) */}
+              {result.status === 'config_error' && (
+                <div className="p-4 sm:p-5 rounded-xl bg-amber-950/40 border border-amber-500/40 text-center space-y-3">
+                  <div className="w-10 h-10 mx-auto rounded-full bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-300">
+                    <Server className="w-5 h-5" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm sm:text-base font-serif-kr font-bold text-amber-200">
+                      운영 서버 주소 설정 안내
+                    </h4>
+                    <p className="text-xs text-amber-300 font-medium">
+                      {result.message}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-black/40 border border-amber-400/20 text-left text-[11px] text-slate-300 space-y-2 leading-relaxed">
+                    <p className="text-amber-200/90 font-medium">
+                      {result.detail || 'GitHub Pages 정적 사이트에서 배정 조회를 정상 운영하려면 별도로 배포된 백엔드 API 주소가 필요합니다.'}
+                    </p>
+                    <div className="pt-1 border-t border-amber-400/10 space-y-1 text-slate-400 font-mono text-[10px]">
+                      <p>1. 백엔드(server.ts) 배포 (Render, Cloud Run 등)</p>
+                      <p>2. GitHub 저장소 Settings → Secrets and variables → Actions</p>
+                      <p>3. Repository Variable/Secret에 VITE_API_BASE_URL 등록</p>
+                    </div>
+                  </div>
+                  <div className="pt-1 flex items-center justify-center gap-2 text-xs text-amber-300">
+                    <Phone className="w-3.5 h-3.5" />
+                    <a href="tel:0547738933" className="hover:underline">
+                      문의: 054-773-8933 (과학연구실)
+                    </a>
+                  </div>
                 </div>
               )}
             </div>

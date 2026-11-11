@@ -11,10 +11,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Body parser
-app.use(express.json());
-
-// CORS configuration to allow requests from GitHub Pages and local/preview environments
+// CORS configuration to allow requests from GitHub Pages and external origins
+// Mounted before body parsers so OPTIONS preflights return immediately
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (origin) {
@@ -22,13 +20,24 @@ app.use((req, res, next) => {
   } else {
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+  res.setHeader('Access-Control-Max-Age', '86400');
+  res.setHeader('Vary', 'Origin');
+
   if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
+    return res.status(204).end();
   }
   next();
 });
+
+// Explicit wildcard OPTIONS handler
+app.options('*', (_req, res) => {
+  res.status(204).end();
+});
+
+// Body parser
+app.use(express.json());
 
 // Simple in-memory rate limiter (per IP) to prevent brute force lookups
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
